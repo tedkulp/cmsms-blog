@@ -61,11 +61,33 @@ class Blog extends CmsModuleBase
 		$this->register_data_object('BlogCategory');
 	}
 	
-	public function get_statuses()
+	public function get_categories($add_any = false)
 	{
 		$result = array();
+		if ($add_any)
+		{
+			$result[''] = $this->lang('any');
+		}
+		$categories = cms_orm('BlogCategory')->find_all(array('order' => 'name ASC'));
+		if ($categories != null)
+		{
+			foreach ($categories as $one_category)
+			{
+				$result[$one_category->id] = $one_category->name;
+			}
+		}
+		return $result;
+	}
+	
+	public function get_statuses($add_any = false)
+	{
+		$result = array();
+		if ($add_any)
+		{
+			$result[''] = $this->lang('any');
+		}
 		$result['draft'] = $this->lang('draft');
-		$result['publish'] = $this->lang('publish');
+		$result['publish'] = $this->lang('published');
 		return $result;
 	}
 }

@@ -31,13 +31,14 @@ class BlogPost extends CmsObjectRelationalMapping
 	{
 		$this->validate_not_blank('title', lang('nofieldgiven',array(lang('title'))));
 		$this->validate_not_blank('content', lang('nofieldgiven',array(lang('content'))));
-		$this->validate_not_blank('slug', lang('nofieldgiven',array(lang('slug'))));
+		if ($this->title != '')
+			$this->validate_not_blank('slug', lang('nofieldgiven',array('slug')));
 	}
 	
 	function before_validation()
 	{
 		//if this is the first save of this post, generate a decent slug
-		if ($this->id < 1 && $this->slug == '')
+		if ($this->slug == '')
 		{
 			$this->slug = munge_string_to_url($this->title, true);
 		}

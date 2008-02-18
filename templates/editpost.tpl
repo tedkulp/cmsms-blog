@@ -1,6 +1,6 @@
 {validation_errors for=$blog_post}
 
-{mod_form action="defaultadmin"}
+{mod_form action=$form_action}
 	
 	<p>
 		{mod_label name="blog_post[title]" value="title" translate=true}:<br />
@@ -29,7 +29,12 @@
 	</p>
 	
 	<p>
+		{mod_hidden name="blog_post[author_id]" value=$blog_post->author_id}
 		{mod_submit name="submitpost" value=submit translate=true} 
+		{if $blog_post->id gt 0}
+			{mod_hidden name="blog_post_id" value=$blog_post->id}
+			{mod_submit name="cancelpost" value=cancel translate=true} 
+		{/if}
 		{mod_submit name="submitpublish" value=publish translate=true}
 	</p>
 
