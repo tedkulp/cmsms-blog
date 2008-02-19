@@ -27,6 +27,38 @@ class BlogPost extends CmsObjectRelationalMapping
 		parent::__construct();
 	}
 	
+	function setup()
+	{
+		$this->create_belongs_to_association('author', 'CmsUser', 'author_id');
+	}
+	
+	function split_content()
+	{
+		return preg_split("/<!--\ ?more\ ?-->/i", $this->content);
+	}
+	
+	function has_more()
+	{
+		return $this->summary != '' || count($this->split_content()) > 1;
+	}
+	
+	function summary()
+	{
+		$result = '';
+
+		if ($this->summary != '')
+		{
+			$result = $this->summary;
+		}
+		else
+		{
+			$parts = $this->split_content();
+			$result = $parts[0];
+		}
+		
+		return $result;
+	}
+	
 	function validate()
 	{
 		$this->validate_not_blank('title', lang('nofieldgiven',array(lang('title'))));

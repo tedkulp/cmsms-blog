@@ -29,7 +29,7 @@ $this->create_table('blog_post_categories', "
 	modified_date T
 ");
 
-$this->set_template('summary', 'Default Template', '<p>Placeholder</p>');
+$this->set_template('summary', 'Default Template', $this->get_default_summary_template());
 $this->set_template('detail', 'Default Template', '<p>Placeholder</p>');
 
 $category = new BlogCategory();

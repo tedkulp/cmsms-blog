@@ -59,6 +59,8 @@ class Blog extends CmsModuleBase
 	{
 		$this->register_data_object('BlogPost');
 		$this->register_data_object('BlogCategory');
+		
+		$this->register_module_plugin('blog');
 	}
 	
 	public function get_categories($add_any = false)
@@ -89,6 +91,28 @@ class Blog extends CmsModuleBase
 		$result['draft'] = $this->lang('draft');
 		$result['publish'] = $this->lang('published');
 		return $result;
+	}
+	
+	public function get_default_summary_template()
+	{
+		return "{foreach from=$posts item=entry}
+		<h3>{$entry->title}</h3>
+		<small>
+		  {$entry->post_date} 
+		  {if $entry->author ne null}
+		    by {$entry->author->full_name()}
+		  {/if}
+		</small>
+
+		<div>
+		{$entry->summary()}
+		</div>
+
+		{if $entry->has_more() eq true}
+		  <a href="{$entry->detailurl}">{tr}hasmore{/tr} &gt;&gt;</a>
+		{/if}
+
+		{/foreach}";
 	}
 }
 
