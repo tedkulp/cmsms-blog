@@ -73,6 +73,7 @@ class BlogPost extends CmsObjectRelationalMapping
 		if ($this->slug == '')
 		{
 			$this->slug = munge_string_to_url($this->title, true);
+			$this->url = $this->post_date->format('Y') . '/' . $this->post_date->format('m') . '/' . $this->post_date->format('d') . '/' . $this->slug;
 		}
 	}
 }

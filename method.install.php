@@ -7,6 +7,7 @@ $this->create_table('blog_posts', "
 	post_date T,
 	title C(255),
 	slug C(255),
+	url C(255),
 	content XL,
 	summary XL,
 	status C(25),
