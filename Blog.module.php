@@ -109,7 +109,7 @@ class Blog extends CmsModuleBase
 		</div>
 
 		{if $entry->has_more() eq true}
-		  <a href="{$entry->detailurl}">{tr}hasmore{/tr} &gt;&gt;</a>
+		  <a href=\"{$entry->detailurl}\">{tr}hasmore{/tr} &gt;&gt;</a>
 		{/if}
 
 		{/foreach}";
