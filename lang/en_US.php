@@ -18,5 +18,8 @@ $lang['cancel'] = 'Cancel';
 $lang['writepost'] = 'Write Post';
 $lang['manageposts'] = 'Manage Posts';
 $lang['slug'] = 'Slug';
+$lang['postnotfound'] = 'Post Not Found';
+$lang['by'] = 'by';
+$lang['hasmore'] = 'Read the rest of this entry';
 
 ?>

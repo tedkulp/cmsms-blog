@@ -5,6 +5,9 @@ $this->create_table('blog_posts', "
 	id I KEY AUTO,
 	author_id I,
 	post_date T,
+	post_year I,
+	post_month I,
+	post_day I,
 	title C(255),
 	slug C(255),
 	url C(255),
@@ -31,7 +34,7 @@ $this->create_table('blog_post_categories', "
 ");
 
 $this->set_template('summary', 'Default Template', $this->get_default_summary_template());
-$this->set_template('detail', 'Default Template', '<p>Placeholder</p>');
+$this->set_template('detail', 'Default Template', $this->get_default_detail_template());
 
 $category = new BlogCategory();
 $category->name = 'General';

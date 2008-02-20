@@ -61,6 +61,12 @@ class Blog extends CmsModuleBase
 		$this->register_data_object('BlogCategory');
 		
 		$this->register_module_plugin('blog');
+
+		$this->register_route('/blog\/category\/(?P<category>[a-zA-Z\-_\ ]+)$/', array('action' => 'list_by_category'));		
+		$this->register_route('/blog\/(?P<url>[0-9]{4}\/[0-9]{2}\/[0-9]{2}\/.*?)$/', array('action' => 'detail'));
+		$this->register_route('/blog\/(?P<year>[0-9]{4})$/', array('action' => 'filter_list', 'month' => '-1', 'day' => '-1'));
+		$this->register_route('/blog\/(?P<year>[0-9]{4})\/(?P<month>[0-9]{2})$/', array('action' => 'filter_list', 'day' => '-1'));
+		$this->register_route('/blog\/(?P<year>[0-9]{4})\/(?P<month>[0-9]{2})\/(?P<day>[0-9]{2})$/', array('action' => 'filter_list'));
 	}
 	
 	public function get_categories($add_any = false)
@@ -95,24 +101,49 @@ class Blog extends CmsModuleBase
 	
 	public function get_default_summary_template()
 	{
-		return "{foreach from=$posts item=entry}
-		<h3>{$entry->title}</h3>
+		return '{foreach from=$posts item=entry}
+		<h3><a href="{$entry->url}">{$entry->title}</a></h3>
 		<small>
 		  {$entry->post_date} 
 		  {if $entry->author ne null}
-		    by {$entry->author->full_name()}
+		    {mod_lang string=by} {$entry->author->full_name()}
 		  {/if}
 		</small>
 
 		<div>
-		{$entry->summary()}
+		{$entry->get_summary_for_frontend()}
 		</div>
 
 		{if $entry->has_more() eq true}
-		  <a href=\"{$entry->detailurl}\">{tr}hasmore{/tr} &gt;&gt;</a>
+		  <a href="{$entry->url}">{mod_lang string=hasmore} &gt;&gt;</a>
 		{/if}
 
-		{/foreach}";
+		{/foreach}';
+	}
+	
+	public function get_default_detail_template()
+	{
+		return '{if $post ne null}
+		<h3>{$post->title}</h3>
+		<small>
+		  {$post->post_date} 
+		  {if $post->author ne null}
+		    {mod_lang string=by} {$post->author->full_name()}
+		  {/if}
+		</small>
+
+		<div>
+		{$post->content}
+		</div>
+
+		<hr />
+
+		<p>
+		Comments Go Here
+		</p>
+		{else}
+		{mod_lang string=postnotfound}
+		{/if}';
 	}
 }
 

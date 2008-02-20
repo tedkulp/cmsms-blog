@@ -39,16 +39,16 @@ class BlogPost extends CmsObjectRelationalMapping
 	
 	function has_more()
 	{
-		return $this->summary != '' || count($this->split_content()) > 1;
+		return $this->params['summary'] != '' || count($this->split_content()) > 1;
 	}
 	
-	function summary()
+	function get_summary_for_frontend()
 	{
 		$result = '';
 
-		if ($this->summary != '')
+		if ($this->params['summary'] != '')
 		{
-			$result = $this->summary;
+			$result = $this->params['summary'];
 		}
 		else
 		{
@@ -57,6 +57,22 @@ class BlogPost extends CmsObjectRelationalMapping
 		}
 		
 		return $result;
+	}
+	
+	function get_url()
+	{
+		$smarty = cms_smarty();
+		$module = $smarty->get_template_vars('cms_mapi_module');
+		if ($module != null && $module instanceof Blog)
+		{
+			$id = $smarty->get_template_vars('cms_mapi_id');
+			$return_id = $smarty->get_template_vars('cms_mapi_return_id');
+			return $module->create_link($id, 'detail', $return_id, '', array('post_id' => $this->id), '', true, false, '', false, 'blog/' . $this->params['url']);
+		}
+		else
+		{
+			return $this->params['url'];
+		}
 	}
 	
 	function validate()
@@ -70,11 +86,19 @@ class BlogPost extends CmsObjectRelationalMapping
 	function before_validation()
 	{
 		//if this is the first save of this post, generate a decent slug
-		if ($this->slug == '')
+		if ($this->slug == '' || $this->url == '')
 		{
 			$this->slug = munge_string_to_url($this->title, true);
-			$this->url = $this->post_date->format('Y') . '/' . $this->post_date->format('m') . '/' . $this->post_date->format('d') . '/' . $this->slug;
+			$this->url = $this->post_date->format('Y/m/d/') . $this->slug;
 		}
+	}
+	
+	function before_save()
+	{
+		//Make sure the date is split out properly
+		$this->post_year = $this->post_date->format('Y');
+		$this->post_month = $this->post_date->format('m');
+		$this->post_day = $this->post_date->format('d');
 	}
 }
 
