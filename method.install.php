@@ -22,6 +22,7 @@ $this->create_table('blog_posts', "
 $this->create_table('blog_categories', "
 	id I KEY AUTO,
 	name C(255),
+	slug C(255),
 	create_date T,
 	modified_date T
 ");

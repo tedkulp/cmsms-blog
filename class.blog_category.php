@@ -26,6 +26,18 @@ class BlogCategory extends CmsObjectRelationalMapping
 	{
 		parent::__construct();
 	}
+	
+	function setup()
+	{
+		$this->create_has_and_belongs_to_many_association('posts', 'BlogPost', 'blog_post_categories', 'post_id', 'category_id', array('order' => 'id DESC'));
+		$this->create_has_and_belongs_to_many_association('published_posts', 'BlogPost', 'blog_post_categories', 'post_id', 'category_id', array('conditions' => array('status = ?', 'publish'), 'order' => 'id DESC'));
+	}
+	
+	function before_save()
+	{
+		//Make sure the date is split out properly
+		$this->slug = munge_string_to_url($this->name);
+	}
 }
 
 # vim:ts=4 sw=4 noet
