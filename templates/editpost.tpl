@@ -15,6 +15,11 @@
 	<p>
 		<fieldset>
 			<legend>{$cms_mapi_module->lang('categories')}</legend>
+			{foreach from=$categories item='one_category'}
+				{assign var=category_id value=$one_category->id}
+				{assign var=category_name value=$one_category->name}
+				{mod_checkbox name="blog_post[category][$category_id]" selected=$blog_post->in_category($category_id)} {$category_name}<br />
+			{/foreach}
 		</fieldset>
 	</p>
 	

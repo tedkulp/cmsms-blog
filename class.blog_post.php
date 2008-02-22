@@ -31,6 +31,7 @@ class BlogPost extends CmsObjectRelationalMapping
 	function setup()
 	{
 		$this->create_belongs_to_association('author', 'CmsUser', 'author_id');
+		$this->create_has_and_belongs_to_many_association('categories', 'BlogCategory', 'blog_post_categories', 'category_id', 'post_id', array('order' => 'name ASC'));
 	}
 	
 	function split_content()
@@ -73,6 +74,38 @@ class BlogPost extends CmsObjectRelationalMapping
 		else
 		{
 			return $this->params['url'];
+		}
+	}
+	
+	function in_category($id)
+	{
+		foreach ($this->categories as $one_category)
+		{
+			if ($one_category->id == $id)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	function set_category($id)
+	{
+		if (!$this->in_category($id))
+		{
+			$date = cms_db()->DBTimeStamp(time());
+			cms_db()->Execute("INSERT INTO " . CMS_DB_PREFIX . "blog_post_categories (category_id, post_id, create_date, modified_date) VALUES (?, ?, {$date}, {$date})", array($id, $this->id));
+			unset($this->associations['categories']);
+		}
+	}
+	
+	function clear_categories()
+	{
+		if ($this->id > 0)
+		{
+			cms_db()->Execute("DELETE FROM " . CMS_DB_PREFIX . 'blog_post_categories WHERE post_id = ?', array($this->id));
+			unset($this->associations['categories']);
 		}
 	}
 	

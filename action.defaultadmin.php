@@ -21,7 +21,16 @@ if (isset($params['submitpost']) || isset($params['submitpublish']))
 
 	if ($blog_post->save())
 	{
-		//$this->redirect($id, 'defaultadmin', $return_id);
+		if (isset($params['blog_post']['category']))
+		{
+			$blog_post->clear_categories();
+			foreach ($params['blog_post']['category'] as $k => $v)
+			{
+				if ($v == 1)
+					$blog_post->set_category($k);
+			}
+		}
+
 		$this->blog_post = new BlogPost();
 		$blog_post->author_id = CmsLogin::get_current_user()->id;
 	}
@@ -33,6 +42,7 @@ $smarty->assign('blog_post', $blog_post);
 $smarty->assign('post_date_prefix', $id . 'post_date_');
 
 $smarty->assign('posts', cms_orm('BlogPost')->find_all(array('order' => 'id desc')));
+$smarty->assign('categories', cms_orm('BlogCategory')->find_all(array('order' => 'name ASC')));
 
 $smarty->assign('writepost', $this->process_template('editpost.tpl', $id, $return_id));
 $smarty->assign('manageposts', $this->process_template('listposts.tpl', $id, $return_id));

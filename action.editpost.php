@@ -28,9 +28,21 @@ if (isset($params['submitpost']) || isset($params['submitpublish']))
 
 	if ($blog_post->save())
 	{
+		if (isset($params['blog_post']['category']))
+		{
+			$blog_post->clear_categories();
+			foreach ($params['blog_post']['category'] as $k => $v)
+			{
+				if ($v == 1)
+					$blog_post->set_category($k);
+			}
+		}
+
 		$this->redirect($id, 'defaultadmin', $return_id, array('selected_tab' => 'manageposts'));
 	}
 }
+
+$smarty->assign('categories', cms_orm('BlogCategory')->find_all(array('order' => 'name ASC')));
 
 $smarty->assign('form_action', 'editpost');
 $smarty->assign('post_date_prefix', $id . 'post_date_');
