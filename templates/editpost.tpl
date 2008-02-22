@@ -29,6 +29,11 @@
 	</p>
 	
 	<p>
+		{mod_label name='post_date_Month' value='postdate' translate=true}:<br />
+		{html_select_date prefix=$post_date_prefix time=$blog_post->post_date->timestamp() start_year=2000 end_year=2020} {html_select_time prefix=$post_date_prefix time=$blog_post->post_date->timestamp()}
+	</p>
+	
+	<p>
 		{mod_hidden name="blog_post[author_id]" value=$blog_post->author_id}
 		{mod_submit name="submitpost" value=submit translate=true} 
 		{if $blog_post->id gt 0}

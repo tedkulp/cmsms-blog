@@ -24,7 +24,7 @@
     	{foreach from=$posts item=entry}
     		<tr class="{cycle values='row1,row2' advance=false name='post'}" onmouseover="this.className='{cycle values='row1,row2' advance=false name='article'}hover';" onmouseout="this.className='{cycle values='row1,row2' name='post'}';">
     			<td>{$entry->title}</td>
-    			<td>{$entry->create_date}</td>
+    			<td>{$entry->post_date}</td>
     			<td>Categories w/ Links</td>
 				<td>Author</td>
 				<td>{mod_lang string=$entry->status}</td>

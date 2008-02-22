@@ -15,6 +15,12 @@ if ($blog_post == null)
 if (isset($params['submitpost']) || isset($params['submitpublish']))
 {
 	$blog_post->update_parameters($params['blog_post']);
+
+	if (isset($params['post_date_Month']))
+	{
+		$blog_post->post_date = new CmsDateTime(mktime($params['post_date_Hour'], $params['post_date_Minute'], $params['post_date_Second'], $params['post_date_Month'], $params['post_date_Day'], $params['post_date_Year']));
+	}
+
 	if (isset($params['submitpublish']))
 	{
 		$blog_post->status = 'publish';
@@ -27,6 +33,7 @@ if (isset($params['submitpost']) || isset($params['submitpublish']))
 }
 
 $smarty->assign('form_action', 'editpost');
+$smarty->assign('post_date_prefix', $id . 'post_date_');
 $smarty->assign('blog_post', $blog_post);
 echo $this->process_template('editpost.tpl', $id, $return_id);
 

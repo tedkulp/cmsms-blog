@@ -25,6 +25,7 @@ class BlogPost extends CmsObjectRelationalMapping
 	function __construct()
 	{
 		parent::__construct();
+		$this->post_date = new CmsDateTime();
 	}
 	
 	function setup()
