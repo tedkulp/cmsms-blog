@@ -139,8 +139,9 @@ class Blog extends CmsModuleBase
 		<hr />
 
 		<p>
-		Comments Go Here
+		{cms_module module="comments" module_name="blog" content_id=$post->id}
 		</p>
+
 		{else}
 		{mod_lang string=postnotfound}
 		{/if}';
