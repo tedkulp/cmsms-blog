@@ -18,9 +18,10 @@
 #
 #$Id$
 
-class BlogCategory extends CmsObjectRelationalMapping
+class BlogCategory extends CmsModuleOrm
 {
 	var $table = 'blog_categories';
+	var $module_name = 'Blog';
 
 	function __construct()
 	{
