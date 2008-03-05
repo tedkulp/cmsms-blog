@@ -149,6 +149,20 @@ class BlogPost extends CmsModuleOrm
 		$this->post_month = $this->post_date->format('m');
 		$this->post_day = $this->post_date->format('d');
 	}
+	
+	function create_xmlrpc_array()
+	{
+		$result = array();
+		
+		$result['title'] = $this->title;
+		$result['link'] = $this->get_url();
+		$result['permaLink'] = $this->get_url();
+		$result['userid'] = $this->author_id;
+		$result['description'] = $this->content;
+		$result['thisid'] = $this->id;
+		
+		return $result;
+	}
 }
 
 # vim:ts=4 sw=4 noet

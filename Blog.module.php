@@ -72,6 +72,34 @@ class Blog extends CmsModuleBase
 		$this->register_route('/blog\/(?P<year>[0-9]{4})$/', array('action' => 'filter_list', 'month' => '-1', 'day' => '-1'));
 		$this->register_route('/blog\/(?P<year>[0-9]{4})\/(?P<month>[0-9]{2})$/', array('action' => 'filter_list', 'day' => '-1'));
 		$this->register_route('/blog\/(?P<year>[0-9]{4})\/(?P<month>[0-9]{2})\/(?P<day>[0-9]{2})$/', array('action' => 'filter_list'));
+		
+		$this->add_xmlrpc_method('getRecentPosts', 'metaWeblog');
+		$this->add_xmlrpc_method('getCategories', 'metaWeblog');
+		$this->add_xmlrpc_method('getPost', 'metaWeblog');
+	}
+	
+	public function getRecentPosts($blog_id, $username, $password, $number_of_posts)
+	{
+		$posts = cms_orm('BlogPost')->find_all(array('limit' => array(0, $number_of_posts), 'order' => 'id DESC'));
+		$result = array();
+		foreach ($posts as $post)
+		{
+			$result[] = $post->create_xmlrpc_array();
+		}
+		return $result;
+	}
+	
+	public function getPost($post_id, $username, $password)
+	{
+		$post = cms_orm('BlogPost')->find_by_id($post_id);
+		if ($post != null)
+			return $post->create_xmlrpc_array();
+		return null;
+	}
+	
+	public function getCategories($blog_id, $username, $password)
+	{
+		return array_values($this->get_categories());
 	}
 	
 	public function get_categories($add_any = false)
