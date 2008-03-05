@@ -34,6 +34,11 @@
 	</p>
 	
 	<p>
+		{mod_label name="blog_post[processor]" value="text_processor" translate=true}:<br />
+		{mod_dropdown name="blog_post[processor]" items=$processors selected_value=$blog_post->processor}
+	</p>
+	
+	<p>
 		{mod_label name='post_date_Month' value='postdate' translate=true}:<br />
 		{html_select_date prefix=$post_date_prefix time=$blog_post->post_date->timestamp() start_year=2000 end_year=2020} {html_select_time prefix=$post_date_prefix time=$blog_post->post_date->timestamp()}
 	</p>

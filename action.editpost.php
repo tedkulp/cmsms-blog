@@ -43,6 +43,7 @@ if (isset($params['submitpost']) || isset($params['submitpublish']))
 }
 
 $smarty->assign('categories', cms_orm('BlogCategory')->find_all(array('order' => 'name ASC')));
+$smarty->assign('processors', CmsTextProcessor::list_processors_for_dropdown());
 
 $smarty->assign('form_action', 'editpost');
 $smarty->assign('post_date_prefix', $id . 'post_date_');

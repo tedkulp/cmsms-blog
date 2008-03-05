@@ -43,6 +43,7 @@ $smarty->assign('post_date_prefix', $id . 'post_date_');
 
 $smarty->assign('posts', cms_orm('BlogPost')->find_all(array('order' => 'id desc')));
 $smarty->assign('categories', cms_orm('BlogCategory')->find_all(array('order' => 'name ASC')));
+$smarty->assign('processors', CmsTextProcessor::list_processors_for_dropdown());
 
 $smarty->assign('writepost', $this->process_template('editpost.tpl', $id, $return_id));
 $smarty->assign('manageposts', $this->process_template('listposts.tpl', $id, $return_id));
