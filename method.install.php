@@ -15,6 +15,7 @@ $this->create_table('blog_posts', "
 	summary XL,
 	status C(25),
 	use_comments I(1) default 1,
+	processor C(25) default '',
 	create_date T,
 	modified_date T
 ");

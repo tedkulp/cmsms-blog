@@ -59,7 +59,21 @@ class BlogPost extends CmsModuleOrm
 			$result = $parts[0];
 		}
 		
-		return $result;
+		return CmsTextProcessor::process($result, $this->get_text_processor());
+	}
+	
+	function get_details_for_frontend()
+	{
+		return CmsTextProcessor::process($this->content, $this->get_text_processor());
+	}
+	
+	function get_text_processor()
+	{
+		if ($this->processor !== null)
+		{
+			return $this->processor;
+		}
+		return 'markdown';
 	}
 	
 	function get_url()

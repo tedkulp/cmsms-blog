@@ -45,6 +45,11 @@ class Blog extends CmsModuleBase
 		return true;
 	}
 	
+	function minimum_core_version()
+	{
+		return '2.0-svn';
+	}
+	
 	function get_admin_description()
 	{
 		return $this->Lang('description');
