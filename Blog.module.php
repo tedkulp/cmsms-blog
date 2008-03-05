@@ -76,6 +76,8 @@ class Blog extends CmsModuleBase
 		$this->add_xmlrpc_method('getRecentPosts', 'metaWeblog');
 		$this->add_xmlrpc_method('getCategories', 'metaWeblog');
 		$this->add_xmlrpc_method('getPost', 'metaWeblog');
+		$this->add_xmlrpc_method('newPost', 'metaWeblog');
+		$this->add_xmlrpc_method('editPost', 'metaWeblog');
 	}
 	
 	public function getRecentPosts($blog_id, $username, $password, $number_of_posts)
@@ -100,6 +102,50 @@ class Blog extends CmsModuleBase
 	public function getCategories($blog_id, $username, $password)
 	{
 		return array_values($this->get_categories());
+	}
+	
+	public function newPost($blog_id, $username, $password, $struct, $publish)
+	{
+		$post = new BlogPost();
+		$post->title = $struct['title'];
+		$post->content = $struct['description'];
+		$post->status = ($publish ? 'publish' : 'draft');
+		if ($post->save())
+		{
+			if (isset($struct['categories']))
+			{
+				foreach ($struct['categories'] as $one_cat)
+				{
+					$post->set_category_by_name($one_cat);
+				}
+			}
+			return $post->id;
+		}
+		return null;
+	}
+	
+	public function editPost($post_id, $username, $password, $struct, $publish)
+	{
+		$post = cms_orm('BlogPost')->find_by_id($post_id);
+		if ($post != null)
+		{
+			$post->title = $struct['title'];
+			$post->content = $struct['description'];
+			$post->status = ($publish ? 'publish' : 'draft');
+			if ($post->save())
+			{
+				if (isset($struct['categories']))
+				{
+					$post->clear_categories();
+					foreach ($struct['categories'] as $one_cat)
+					{
+						$post->set_category_by_name($one_cat);
+					}
+				}
+				return true;
+			}
+		}
+		return null;
 	}
 	
 	public function get_categories($add_any = false)

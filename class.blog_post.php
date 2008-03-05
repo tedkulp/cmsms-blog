@@ -115,6 +115,15 @@ class BlogPost extends CmsModuleOrm
 		}
 	}
 	
+	function set_category_by_name($name)
+	{
+		$cat = cms_orm('BlogCategory')->find_by_name($name);
+		if ($cat != null)
+		{
+			$this->set_category($cat->id);
+		}
+	}
+	
 	function clear_categories()
 	{
 		if ($this->id > 0)
@@ -159,7 +168,15 @@ class BlogPost extends CmsModuleOrm
 		$result['permaLink'] = $this->get_url();
 		$result['userid'] = $this->author_id;
 		$result['description'] = $this->content;
-		$result['thisid'] = $this->id;
+		$result['postid'] = $this->id;
+		
+		$categories = array();
+		foreach ($this->categories as $one_cat)
+		{
+			$categories[] = $one_cat->name;
+		}
+		if (count($categories) > 0)
+			$result['categories'] = $categories;
 		
 		return $result;
 	}
