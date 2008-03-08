@@ -67,7 +67,9 @@ class Blog extends CmsModuleBase
 		
 		$this->register_module_plugin('blog');
 
-		$this->register_route('/blog\/category\/(?P<category>[a-zA-Z\-_\ ]+)$/', array('action' => 'list_by_category'));		
+		$this->register_route('/blog\/rss\.xml$/', array('action' => 'default', 'rss' => true, 'showtemplate' => false));
+		$this->register_route('/blog\/category\/(?P<category>[a-zA-Z\-_\ ]+)\.xml$/', array('action' => 'list_by_category', 'rss' => true, 'showtemplate' => false));
+		$this->register_route('/blog\/category\/(?P<category>[a-zA-Z\-_\ ]+)$/', array('action' => 'list_by_category'));
 		$this->register_route('/blog\/(?P<url>[0-9]{4}\/[0-9]{2}\/[0-9]{2}\/.*?)$/', array('action' => 'detail'));
 		$this->register_route('/blog\/(?P<year>[0-9]{4})$/', array('action' => 'filter_list', 'month' => '-1', 'day' => '-1'));
 		$this->register_route('/blog\/(?P<year>[0-9]{4})\/(?P<month>[0-9]{2})$/', array('action' => 'filter_list', 'day' => '-1'));
@@ -78,6 +80,32 @@ class Blog extends CmsModuleBase
 		$this->add_xmlrpc_method('getPost', 'metaWeblog');
 		$this->add_xmlrpc_method('newPost', 'metaWeblog');
 		$this->add_xmlrpc_method('editPost', 'metaWeblog');
+		
+		$this->add_temp_event_handler('Core', 'HeaderTagRender', 'handle_header_callback');
+	}
+	
+	public function handle_header_callback($modulename, $eventname, &$params)
+	{
+		//We only add this link if another action hasn't done so already -- view by category does it's own thing, for example.
+		if (!$this->has_added_header_text())
+			$params['content'] .= '<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="' . $this->generate_rss_link() . '" />' . "\n";
+	}
+	
+	protected function generate_rss_link($params = array(), $category = '')
+	{
+		$pretty_url = 'blog/rss.xml';
+		if ($category != '')
+		{
+			$pretty_url = 'blog/category/' . $category . '.xml';
+			if (!array_key_exists('category', $params))
+				$params['category'] = $category;
+		}
+		return $this->create_link('cntnt01', 'rss', $this->get_default_return_id(), '', $params, '', true, false, '', false, $pretty_url);
+	}
+	
+	private function get_default_return_id()
+	{
+		return cmsms()->get('pageinfo')->return_id;
 	}
 	
 	public function getRecentPosts($blog_id, $username, $password, $number_of_posts)
@@ -181,49 +209,71 @@ class Blog extends CmsModuleBase
 	public function get_default_summary_template()
 	{
 		return '{foreach from=$posts item=entry}
-		<h3><a href="{$entry->url}">{$entry->title}</a></h3>
-		<small>
-		  {$entry->post_date} 
-		  {if $entry->author ne null}
-		    {mod_lang string=by} {$entry->author->full_name()}
-		  {/if}
-		</small>
+<h3><a href="{$entry->url}">{$entry->title}</a></h3>
+<small>
+  {$entry->post_date} 
+  {if $entry->author ne null}
+    {mod_lang string=by} {$entry->author->full_name()}
+  {/if}
+</small>
 
-		<div>
-		{$entry->get_summary_for_frontend()}
-		</div>
+<div>
+{$entry->get_summary_for_frontend()}
+</div>
 
-		{if $entry->has_more() eq true}
-		  <a href="{$entry->url}">{mod_lang string=hasmore} &gt;&gt;</a>
-		{/if}
+{if $entry->has_more() eq true}
+  <a href="{$entry->url}">{mod_lang string=hasmore} &gt;&gt;</a>
+{/if}
 
-		{/foreach}';
+{/foreach}';
 	}
 	
 	public function get_default_detail_template()
 	{
 		return '{if $post ne null}
-		<h3>{$post->title}</h3>
-		<small>
-		  {$post->post_date} 
-		  {if $post->author ne null}
-		    {mod_lang string=by} {$post->author->full_name()}
-		  {/if}
-		</small>
+<h3>{$post->title}</h3>
+<small>
+  {$post->post_date} 
+  {if $post->author ne null}
+    {mod_lang string=by} {$post->author->full_name()}
+  {/if}
+</small>
 
-		<div>
-		{$post->content}
-		</div>
+<div>
+{$post->content}
+</div>
 
-		<hr />
+<hr />
 
-		<p>
-		{cms_module module="comments" module_name="blog" content_id=$post->id}
-		</p>
+<p>
+{cms_module module="comments" module_name="blog" content_id=$post->id}
+</p>
 
-		{else}
-		{mod_lang string=postnotfound}
-		{/if}';
+{else}
+{mod_lang string=postnotfound}
+{/if}';
+	}
+	
+	public function get_default_rss_template()
+	{
+		return '<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>{$sitename|escape}</title>
+		<link>{root_url}</link>
+		{foreach from=$posts item=entry}
+		<item>
+			<title><![CDATA[{$entry->title}]]></title>
+			<link>{$entry->url}</link>
+			<guid>{$entry->url}</guid>
+			<pubDate>{$entry->post_date}</pubDate>
+			<category><![CDATA[]]></category>
+			<description><![CDATA[{$entry->get_summary_for_frontend()}]]></description>
+		</item>
+		{/foreach}
+	</channel>
+</rss> 
+';
 	}
 }
 

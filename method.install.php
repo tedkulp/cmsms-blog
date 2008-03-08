@@ -37,6 +37,7 @@ $this->create_table('blog_post_categories', "
 
 $this->set_template('summary', 'Default Template', $this->get_default_summary_template());
 $this->set_template('detail', 'Default Template', $this->get_default_detail_template());
+$this->set_template('rss', 'Default Template', $this->get_default_rss_template());
 
 $category = new BlogCategory();
 $category->name = 'General';
