@@ -159,6 +159,16 @@ class BlogPost extends CmsModuleOrm
 		$this->post_day = $this->post_date->format('d');
 	}
 	
+	function after_save()
+	{
+		$this->index();
+	}
+	
+	function after_delete()
+	{
+		CmsSearch::get_instance()->remove_content('Blog', 'BlogPost', $this->id);
+	}
+	
 	function create_xmlrpc_array()
 	{
 		$result = array();
@@ -179,6 +189,11 @@ class BlogPost extends CmsModuleOrm
 			$result['categories'] = $categories;
 		
 		return $result;
+	}
+	
+	public function index()
+	{
+		CmsSearch::get_instance()->add_content('Blog', 'BlogPost', $this->id, $this->get_url(), $this->title, $this->content, 'en_US', $this->get_summary_for_frontend());
 	}
 }
 

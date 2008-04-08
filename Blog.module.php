@@ -82,6 +82,7 @@ class Blog extends CmsModuleBase
 		$this->add_xmlrpc_method('editPost', 'metaWeblog');
 		
 		$this->add_temp_event_handler('Core', 'HeaderTagRender', 'handle_header_callback');
+		$this->add_temp_event_handler('Core', 'SearchReindex', 'reindex');
 	}
 	
 	public function handle_header_callback($modulename, $eventname, &$params)
@@ -204,6 +205,15 @@ class Blog extends CmsModuleBase
 		$result['draft'] = $this->lang('draft');
 		$result['publish'] = $this->lang('published');
 		return $result;
+	}
+	
+	public function reindex()
+	{
+		$posts = cms_orm('BlogPost')->find_all_by_status('publish');
+		foreach ($posts as $one_post)
+		{
+			$one_post->index();
+		}
 	}
 	
 	public function get_default_summary_template()
