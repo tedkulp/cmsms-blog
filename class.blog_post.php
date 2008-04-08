@@ -161,12 +161,15 @@ class BlogPost extends CmsModuleOrm
 	
 	function after_save()
 	{
-		$this->index();
+		if ($this->status == 'publish')
+			$this->index();
+		else
+			$this->remove_index(); //In case the status was changed from publish to sommething else
 	}
 	
 	function after_delete()
 	{
-		CmsSearch::get_instance()->remove_content('Blog', 'BlogPost', $this->id);
+		$this->remove_index();
 	}
 	
 	function create_xmlrpc_array()
@@ -194,6 +197,11 @@ class BlogPost extends CmsModuleOrm
 	public function index()
 	{
 		CmsSearch::get_instance()->add_content('Blog', 'BlogPost', $this->id, $this->get_url(), $this->title, $this->content, 'en_US', $this->get_summary_for_frontend());
+	}
+	
+	public function remove_index()
+	{
+		CmsSearch::get_instance()->remove_content('Blog', 'BlogPost', $this->id);
 	}
 }
 
